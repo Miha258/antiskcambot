@@ -1,1 +1,6 @@
-@pos21ds
+@blacklist_xram
+@BlackListGreenHelpBook
+@blacklistkingdom
+@AllianceBlacList
+@dealwithcaution
+@kidok_list

@@ -31,7 +31,6 @@ logging.basicConfig(level = logging.INFO)
 
 @dp.message_handler(IsDM(True), commands = ["start"])
 async def start_command(message: types.Message):
-
     lang = get_language(message.from_id)
     if not await Users.get_by_id(message.from_id):
         await Users.add(message.from_id, message.from_user.username)

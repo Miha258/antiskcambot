@@ -1,10 +1,14 @@
 import asyncio
-from telethon import TelegramClient, events, types
-import asyncio, re
+from telethon import TelegramClient, events
+from telethon.tl.patched import Message
+import asyncio
 from utils import view_channels
-from main import bot
+from utils import get_user_id
 import os, dotenv
-from aiogram import types as aitypes
+from db.blacklist import Blacklist
+from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.functions.help import GetUserInfoRequest
+
 
 dotenv.load_dotenv()
        
@@ -32,23 +36,28 @@ async def search_user(username):
         except Exception as e:
               print(f"Error: {e}")
 
-async def process_message(message: types.Message):
-    message_text = message.message  
-    if "id" in message_text:
-        id_match = re.search(r'id (\d+)', message_text)
-        if id_match:
+async def process_message(client: TelegramClient, messages: list[Message]):
+    message_text = messages[0].message  
+    user_id = await get_user_id(message_text)
+    if user_id:
+        target = await Blacklist.get_by_id(user_id)
+        if not target:
+            m = (await client.forward_messages(chat, messages = messages))[0]
+            await Blacklist.add(user_id, f"https://t.me/c/{m.peer_id}/{m.id}", "")
             
-            if message.media:
-                await bot.send_media_group("@pos21ds", [aitypes.InputMediaPhoto() for document in message.media])
-            else:
-                await bot.send_message("@pos21ds", message.text)
-
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client:
+        for chat in view_channels():
+            await client(JoinChannelRequest(chat))
+
+        @client.on(events.Album(chats = view_channels()))
+        async def event_handler(event: events.Album.Event):
+            await process_message(client, event.messages)
+
         @client.on(events.NewMessage(chats = view_channels()))
         async def event_handler(event: events.NewMessage.Event):
-            await process_message(event.message)
+            await process_message(client, [event.message])
         await client.run_until_disconnected()
 
 

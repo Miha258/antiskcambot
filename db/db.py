@@ -14,7 +14,7 @@ class DB:
         self.db_file = db_file
 
     async def __call__(self):
-        self.conn = await aiosqlite.connect(self.db_file)
+        self.conn = await aiosqlite.connect(self.db_file, check_same_thread = False)
         self.conn.isolation_level = None
         self.cursor = await self.conn.cursor()
         return self

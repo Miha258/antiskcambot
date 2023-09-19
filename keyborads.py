@@ -7,7 +7,6 @@ async def main_menu(message: types.Message, lang: str):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
     is_admin = str(message.from_id) in get_admins()
     menu_buttons = menu[lang] + admin_menu[lang] if is_admin else menu[lang]
-      
     keyboard.add(*menu_buttons)
     return keyboard
   
