@@ -1,6 +1,6 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
-
+import os
 from keyborads import *
 import aiohttp
 from states import *
@@ -12,7 +12,7 @@ import asyncio
 
 headers = {
     'Host': 'pay.crypt.bot',
-    'Crypto-Pay-API-Token': "109873:AAkLNPN7OUcdIfGIXWP4lpznafNepPl45p8"
+    'Crypto-Pay-API-Token': os.environ['CRYPTO_WALLET']
 }
 
      
@@ -82,7 +82,7 @@ async def check_invoice(callback_query: types.CallbackQuery, state: FSMContext):
             chat = await bot.get_chat(channel_id)
             response = await response.json()
             paynament = response['result']['items'][0]
-            if paynament['status'] != 'paid':
+            if paynament['status'] == 'paid':
                 if option in premium_options["auto_delete"].values():
                     await callback_query.message.answer(premium_options["auto_delete_paynamnet"][lang](chat.title), parse_mode = "html")
                     if not await Channels.get_by_id(channel_id):
