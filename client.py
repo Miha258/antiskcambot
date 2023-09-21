@@ -49,7 +49,10 @@ async def process_message(client: TelegramClient, messages: list[Message]):
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client:
         for chat in view_channels():
-            await client(JoinChannelRequest(chat))
+            try:
+                await client(JoinChannelRequest(chat))
+            except Exception as e:
+                print(f'Cant join to {chat}')
 
         @client.on(events.Album(chats = view_channels()))
         async def event_handler(event: events.Album.Event):
