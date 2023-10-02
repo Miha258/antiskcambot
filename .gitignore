@@ -2,3 +2,5 @@ __pycache__
 db/__pycache__
 functions/__pycache__
 *.session
+config.json
+session_file.session

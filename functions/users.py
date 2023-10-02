@@ -24,7 +24,8 @@ async def verify_user(message: types.Message, state: FSMContext):
             id = target.get("id")
             usarname = target.get("username")
             added_in = target.get("added_in")
-            await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in), parse_mode = "html", reply_markup = await main_menu(message, lang))
+            link = target.get("link")
+            await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in, link), parse_mode = "html", reply_markup = await main_menu(message, lang))
         else:
             await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
         await state.finish()
@@ -35,10 +36,10 @@ async def add_to_database(message: types.Message, state: FSMContext):
     username = await get_username(message)
     user_id = await get_user_id(message.text)
     
-    if not re.search(r'(@\w+ - https:\/\/\S+)', message.text):
+    if not re.search(r'(https:\/\/\S+)', message.text):
         return await message.answer(user["invalid_link"][lang])
     
-    link = message.text.split('-')[0]
+    link = message.text.split('-')[1]
     target = None
     target_id = None
     if username:
@@ -50,7 +51,7 @@ async def add_to_database(message: types.Message, state: FSMContext):
     if target:
         await message.answer(user["already_exsists"][lang], reply_markup = await main_menu(message, lang))
     else:
-        await Blacklist.add(target_id, link, username)
+        await Blacklist.add(target_id, username, link)
         await message.answer(user["added"][lang], reply_markup = await main_menu(message, lang))
     await state.finish()
 

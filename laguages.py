@@ -188,8 +188,8 @@ channels = {
 
 
 blacklist = {
-    "EN": lambda username, id, added_in, url: f"<b>{username} has been found in scammers database!</b> \nId: {id}\nAdded in: {added_in}\n Blacklist url: {url}",
-    "RU": lambda username, id, added_in, url: f"<b>{username} был найден в бд скамеров!</b>: \nАйди: {id}\nДобавлен: {added_in}\n Cсылка на блек: {url}"
+    "EN": lambda username, id, added_in, url: f"<b>{username} has been found in scammers database!</b> \nId: {id}\nAdded in: {added_in}\nBlacklist url: {url}",
+    "RU": lambda username, id, added_in, url: f"<b>{username} был найден в бд скамеров!</b>: \nАйди: {id}\nДобавлен: {added_in}\nCсылка на блек: {url}"
 }
 
 

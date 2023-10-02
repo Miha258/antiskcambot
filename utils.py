@@ -38,7 +38,7 @@ async def fetch_media_bytes(url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             image_bytes = await response.read()
-            return image_bytes    #
+            return image_bytes  
         
 
 channels_file = "channels.txt"

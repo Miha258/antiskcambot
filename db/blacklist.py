@@ -18,7 +18,7 @@ class Blacklist(UserTable):
         return await db.get_all_records(cls.table)
 
     @classmethod
-    async def add(cls, id: int, link: str, username: str):
+    async def add(cls, id: int, username: str, link: str):
         await db.create_record(cls.table, id = id, username = username, link = link, added_in = datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     @classmethod

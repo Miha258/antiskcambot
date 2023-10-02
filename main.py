@@ -6,4 +6,3 @@ dotenv.load_dotenv()
 bot = Bot(token = os.environ["TOKEN"])
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage = storage)
-
