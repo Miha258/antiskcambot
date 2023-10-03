@@ -4,6 +4,7 @@ from telethon.tl.patched import Message
 import asyncio
 from utils import view_channels
 from utils import get_user_id
+from random import randint
 import os, dotenv
 from db.blacklist import Blacklist
 from telethon.tl.functions.channels import JoinChannelRequest
@@ -45,7 +46,7 @@ async def process_message(client: TelegramClient, messages: list[Message]):
         if not target:
             m = (await client.forward_messages(chat, messages = messages))[0]
             await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id}/{m.id}")
-            
+            return m
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client:
@@ -57,7 +58,9 @@ async def main():
                         user_id = int(user_id)
                         target = await Blacklist.get_by_id(user_id)
                         if not target:
-                            await Blacklist.add(user_id, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
+                            m = await process_message(client, [message])
+                            await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
+                            await asyncio.sleep(randint(60, 180))
                 await client(JoinChannelRequest(chat))
             except Exception as e:
                 print(f'Cant join to {chat}')
