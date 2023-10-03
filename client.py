@@ -51,16 +51,16 @@ async def process_message(client: TelegramClient, messages: list[Message]):
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client:
         for chat in view_channels():
+            for message in await client.get_messages(chat, limit=3000):
+                user_id = await get_user_id(message.message)
+                if user_id:
+                    user_id = int(user_id)
+                    target = await Blacklist.get_by_id(user_id)
+                    if not target:
+                        m = await process_message(client, [message])
+                        await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
+                        await asyncio.sleep(randint(60, 180))
             try:
-                for message in await client.get_messages(chat, limit=3000):
-                    user_id = await get_user_id(message.message)
-                    if user_id:
-                        user_id = int(user_id)
-                        target = await Blacklist.get_by_id(user_id)
-                        if not target:
-                            m = await process_message(client, [message])
-                            await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
-                            await asyncio.sleep(randint(60, 180))
                 await client(JoinChannelRequest(chat))
             except Exception as e:
                 print(f'Cant join to {chat}')
