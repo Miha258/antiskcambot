@@ -7,8 +7,6 @@ from utils import get_user_id
 from random import randint
 import os, dotenv
 from db.blacklist import Blacklist
-from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl.functions.help import GetUserInfoRequest
 
 
 dotenv.load_dotenv()
@@ -16,7 +14,7 @@ dotenv.load_dotenv()
 api_id = os.environ["API_ID"]
 api_hash = os.environ["API_HASH"]
 phone_number = os.environ["PHONE_NUMBER"]
-chat = os.environ['CHAT']
+main_chat = os.environ['CHAT']
 
 async def login(client):
     if not await client.is_user_authorized():
@@ -44,27 +42,26 @@ async def process_message(client: TelegramClient, messages: list[Message]):
         user_id = int(user_id)
         target = await Blacklist.get_by_id(user_id)
         if not target:
-            m = (await client.forward_messages(chat, messages = messages))[0]
-            await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id}/{m.id}")
+            
+            m = (await client.forward_messages(main_chat, messages = messages))[0]
+            await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
             return m
 
 async def main():
-    async with TelegramClient('./session_file.session', api_id, api_hash) as client:
+    async with TelegramClient('./session_file.session', api_id, api_hash) as client: 
         for chat in view_channels():
-            for message in await client.get_messages(chat, limit=3000):
-                user_id = await get_user_id(message.message)
-                if user_id:
-                    user_id = int(user_id)
-                    target = await Blacklist.get_by_id(user_id)
-                    if not target:
-                        m = await process_message(client, [message])
-                        await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
-                        await asyncio.sleep(randint(60, 180))
-            try:
-                await client(JoinChannelRequest(chat))
-            except Exception as e:
-                print(f'Cant join to {chat}')
-
+            for message in await client.get_messages(chat, limit=500):
+                try:
+                    user_id = await get_user_id(message)
+                    if user_id:
+                        user_id = int(user_id)
+                        target = await Blacklist.get_by_id(user_id)
+                        if not target:
+                            m = (await client.forward_messages(main_chat, messages = [message]))[0]
+                            await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
+                            await asyncio.sleep(randint(15, 30))
+                except Exception as e:
+                    print(e)
         @client.on(events.Album(chats = view_channels()))
         async def event_handler(event: events.Album.Event):
             await process_message(client, event.messages)
