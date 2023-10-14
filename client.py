@@ -52,7 +52,7 @@ async def main():
         for chat in view_channels():
             for message in await client.get_messages(chat, limit=500):
                 try:
-                    user_id = await get_user_id(message)
+                    user_id = await get_user_id(message.message)
                     if user_id:
                         user_id = int(user_id)
                         target = await Blacklist.get_by_id(user_id)
