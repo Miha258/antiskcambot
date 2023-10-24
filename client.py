@@ -62,7 +62,7 @@ async def main():
                             messages = list(filter(lambda m: m.grouped_id == message.grouped_id, target_messages))
                             m = (await client.forward_messages(main_chat, messages = messages))[0]
                             await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
-                            await asyncio.sleep(randint(15, 30))
+                            await asyncio.sleep(randint(60, 180))
                 except Exception as e:
                     print(e)
         @client.on(events.Album(chats = view_channels()))
