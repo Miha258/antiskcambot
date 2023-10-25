@@ -67,6 +67,7 @@ async def copy_messages():
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client: 
+        print(await client.get_me())
         asyncio.get_event_loop().create_task(copy_messages())
         @client.on(events.Album(chats = view_channels()))
         async def event_handler(event: events.Album.Event):
