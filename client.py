@@ -7,6 +7,7 @@ from utils import get_user_id
 from random import randint
 import os, dotenv
 from db.blacklist import Blacklist
+from telethon.tl.functions.channels import JoinChannelRequest
 
 
 dotenv.load_dotenv()
@@ -42,7 +43,6 @@ async def process_message(client: TelegramClient, messages: list[Message]):
         user_id = int(user_id)
         target = await Blacklist.get_by_id(user_id)
         if not target:
-            
             m = (await client.forward_messages(main_chat, messages = messages))[0]
             await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
             return m
@@ -67,6 +67,20 @@ async def copy_messages(client: TelegramClient):
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client: 
+        for chat in view_channels():
+            try:
+                for message in await client.get_messages(chat, limit=3000):
+                    user_id = await get_user_id(message.message)
+                    if user_id:
+                        user_id = int(user_id)
+                        target = await Blacklist.get_by_id(user_id)
+                        if not target:
+                            await Blacklist.add(user_id, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
+                print(await Blacklist.all())
+                await client(JoinChannelRequest(chat))
+            except Exception as e:
+                print(f'Cant join to {chat}')
+        
         asyncio.get_event_loop().create_task(copy_messages(client))
         @client.on(events.Album(chats = view_channels()))
         async def event_handler(event: events.Album.Event):
