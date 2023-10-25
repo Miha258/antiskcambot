@@ -50,6 +50,7 @@ async def process_message(client: TelegramClient, messages: list[Message]):
 async def copy_messages(client: TelegramClient):
     for chat in view_channels():
         target_messages = await client.get_messages(chat, limit = 500)
+        print(await client.get_me())
         for message in target_messages:
             try:
                 user_id = await get_user_id(message.message)
