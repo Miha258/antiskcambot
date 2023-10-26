@@ -27,7 +27,7 @@ async def get_username(message: types.Message):
     
 
 async def get_user_id(message: str):
-    pattern = r'\b\d{9,}\b'
+    pattern = r'\b\d{8,12}\b'
     user_ids = re.findall(pattern, message)
     
     if user_ids:
