@@ -29,9 +29,7 @@ async def get_username(message: types.Message):
 async def get_user_id(message: str):
     pattern = r'\b\d{8,12}\b'
     user_ids = re.findall(pattern, message)
-    
-    if user_ids:
-        return user_ids[0]
+    return user_ids
 
 
 async def fetch_media_bytes(url):
