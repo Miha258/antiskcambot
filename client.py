@@ -53,7 +53,7 @@ async def copy_messages(client: TelegramClient):
         for message in target_messages:
             try:
                 user_ids = await get_user_id(message.message)
-                if user_id:
+                if user_ids:
                     for id in user_ids:
                         user_id = int(id)
                         target = await Blacklist.get_by_id(user_id)
