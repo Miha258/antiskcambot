@@ -40,7 +40,7 @@ async def process_message(client: TelegramClient, messages: list[Message]):
     message_text = messages[0].message  
     user_id = await get_user_id(message_text)
     if user_id:
-        user_id = int(user_id)
+        user_id = int(user_id[0])
         target = await Blacklist.get_by_id(user_id)
         if not target:
             m = (await client.forward_messages(main_chat, messages = messages))[0]
