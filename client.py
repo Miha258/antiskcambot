@@ -52,14 +52,15 @@ async def copy_messages(client: TelegramClient):
         target_messages = await client.get_messages(chat, limit = 1000)
         for message in target_messages:
             try:
-                print(123)
                 user_ids = await get_user_id(message.message)
                 if user_ids:
                     for id in user_ids:
                         user_id = int(id)
                         target = await Blacklist.get_by_id(user_id)
                         if id == user_ids[0]:
+                            print(target)
                             if not target:
+                                print('sending')
                                 messages = list(filter(lambda m: m.grouped_id == message.grouped_id, target_messages))
                                 message = (await client.forward_messages(main_chat, messages = messages))[0]
                                 await Blacklist.add(user_id, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
