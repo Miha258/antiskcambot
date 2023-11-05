@@ -138,5 +138,5 @@ if __name__ == '__main__':
     register_channels(dp)
     
     dp.register_message_handler(add_admin_handler, lambda m: m.text not in (back["RU"], back["EN"]), state = BotStates.ADD_ADMIN)
-    # subprocess.Popen(['python3', 'client.py'])
+    subprocess.Popen(['python3', 'client.py'])
     executor.start_polling(dp, skip_updates = True, on_startup = on_startup)  
