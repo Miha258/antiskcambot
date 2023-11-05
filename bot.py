@@ -1,4 +1,4 @@
-import logging
+import logging, subprocess
 from main import dp
 from aiogram import executor
 from aiogram import types
