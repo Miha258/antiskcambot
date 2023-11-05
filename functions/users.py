@@ -14,7 +14,7 @@ from keyborads import main_menu
 async def verify_user(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     username = await get_username(message)
-    user_id = await get_user_id(message.text)
+    user_id = await get_user_id(message.text, True)
     
     if not username and not user_id:
         await message.answer(user["invalid_data"][lang])
@@ -34,7 +34,7 @@ async def verify_user(message: types.Message, state: FSMContext):
 async def add_to_database(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     username = await get_username(message)
-    user_id = await get_user_id(message.text)
+    user_id = await get_user_id(message.text, True)
     
     if not re.search(r'(https:\/\/\S+)', message.text):
         return await message.answer(user["invalid_link"][lang])
@@ -59,7 +59,7 @@ async def add_to_database(message: types.Message, state: FSMContext):
 async def delete_from_database(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     username = await get_username(message)
-    user_id = await get_user_id(message.text)
+    user_id = await get_user_id(message.text, True)
     
     target = None
     target_id = None

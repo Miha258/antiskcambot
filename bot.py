@@ -22,11 +22,23 @@ from db.blacklist import Blacklist
 from db.users import Users
 from db.channels import Channels
 from db.adds import Adds
-import subprocess
 
 # Налаштування логування
+class SqlStatementFormatter(logging.Formatter):
+    def format(self, record):
+        message = super().format(record)
+        match = re.search(r"\(.+?, '(.+?)', .+?\)", message)
+        if match:
+            return match.group(1)
+        return message
+    
 logging.basicConfig(level = logging.INFO)
-# Ініціалізація бота та диспетчера
+logger = logging.getLogger('aiogram')
+sqlite_logger = logging.getLogger('aiosqlite')
+sqlite_logger.setLevel(10)
+sqlite_handler = logging.StreamHandler()
+sqlite_handler.setFormatter(SqlStatementFormatter())
+sqlite_logger.addHandler(sqlite_handler)
 
 
 @dp.message_handler(IsDM(True), commands = ["start"])
@@ -61,7 +73,7 @@ async def process_button_click(message: types.Message, state: FSMContext):
             lang = "EN"
             set_user_language(message.from_id, lang)
             await message.answer(change_language[lang], reply_markup = await main_menu(message, lang))
-        case "Change laguage on RU":
+        case "Change language on RU":
             lang = "RU"
             set_user_language(message.from_id, lang)
             await message.answer(change_language[lang], reply_markup = await main_menu(message, lang))
@@ -126,5 +138,5 @@ if __name__ == '__main__':
     register_channels(dp)
     
     dp.register_message_handler(add_admin_handler, lambda m: m.text not in (back["RU"], back["EN"]), state = BotStates.ADD_ADMIN)
-    subprocess.Popen(['python3', 'client.py'])
+    # subprocess.Popen(['python3', 'client.py'])
     executor.start_polling(dp, skip_updates = True, on_startup = on_startup)  

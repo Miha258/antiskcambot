@@ -13,7 +13,7 @@ from utils import get_admins
 async def ask_report_url(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     username = await get_username(message)
-    user_id = await get_user_id(message.text)
+    user_id = await get_user_id(message.text, True)
     target = None
     target_id = None
 

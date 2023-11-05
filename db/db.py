@@ -33,14 +33,12 @@ class DB:
 
         if not await self.read_record(table, "id", data["id"], True):
             query = f"INSERT INTO {table} ({columns}) VALUES ({placeholders})"
-            print(query, list(data.values()))
             await self.cursor.execute(query, list(data.values()))
         else:
             raise DocumentAlreadyExists
 
     async def read_record(self, table: str, by: str, value, all: bool = False):
         query = f"SELECT * FROM {table} WHERE {by} = ?"
-        print(query, (value,))
         await self.cursor.execute(query, (value,))
         records = await self.cursor.fetchall()
 
@@ -51,7 +49,6 @@ class DB:
        
     async def get_all_records(self, table: str):
         query = f"SELECT * FROM {table}"
-        print(query, table)
         await self.cursor.execute(query)
         records = await self.cursor.fetchall()
         column_names = [column[0] for column in self.cursor.description]
@@ -64,7 +61,6 @@ class DB:
         columns = ', '.join(f"{column} = ?" for column in data.keys())
         if await self.read_record(table, by, value, True):
             query = f"UPDATE {table} SET {columns} WHERE id = ?"
-            print(query, list(data.values()) + [value])
             await self.cursor.execute(query, list(data.values()) + [value])
         else:
             raise DocumentNotFound
@@ -72,7 +68,6 @@ class DB:
     async def delete_record(self, table: str, record_id: int):
         if await self.read_record(table, "id", record_id, True):
             query = f"DELETE FROM {table} WHERE id = ?"
-            print(query, record_id)
             await self.cursor.execute(query, (record_id,))
         else:
             raise DocumentNotFound
