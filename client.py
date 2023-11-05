@@ -54,6 +54,7 @@ async def copy_messages(client: TelegramClient):
             try:
                 user_ids = await get_user_id(message.message)
                 if user_ids:
+                    global new
                     new = False
                     for id in user_ids:
                         user_id = int(id)
