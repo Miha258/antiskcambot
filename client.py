@@ -71,7 +71,6 @@ async def copy_messages(client: TelegramClient):
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client: 
-        print(await TelegramClient.iter_messages('1295847349'))
         for chat in view_channels():
             try:
                 await client(JoinChannelRequest(chat))
