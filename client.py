@@ -58,12 +58,13 @@ async def copy_messages(client: TelegramClient):
                     for id in user_ids:
                         user_id = int(id)
                         target = await Blacklist.get_by_id(user_id)
-                        targets.append(target is not None)
-                        if not target:
-                            await Blacklist.add(user_id, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
-                if any(targets):
+                        if target:
+                            targets.append(target)
+                if targets:
                     messages = list(filter(lambda m: m.grouped_id == message.grouped_id, target_messages))
                     message = (await client.forward_messages(main_chat, messages = messages))[0]
+                    for target in targets:
+                        await Blacklist.add(user_id, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
                     await asyncio.sleep(randint(60, 180))
 
             except Exception as e:
