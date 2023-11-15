@@ -8,7 +8,7 @@ from random import randint
 import os, dotenv
 from db.blacklist import Blacklist
 from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl import types
+from telethon.tl.patched import MessageService
 
 dotenv.load_dotenv()
        
@@ -69,10 +69,12 @@ async def copy_messages(client: TelegramClient):
                             targets.append(id)
                 if targets:
                     messages = list(filter(lambda m: m.grouped_id == message.grouped_id, target_messages))
-                    message = (await client.forward_messages(main_chat, messages = messages))[-1]
-                    for target in targets:
-                        await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
-                    await asyncio.sleep(randint(60, 180))
+                    print(messages)
+                    if all([not isinstance(message, MessageService) for message in messages]):
+                        message = (await client.forward_messages(main_chat, messages = messages))[-1]
+                        for target in targets:
+                            await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
+                        await asyncio.sleep(randint(60, 180))
             # except Exception as e:
             #     print(e)
 
