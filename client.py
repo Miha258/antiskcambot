@@ -49,7 +49,6 @@ async def process_message(client: TelegramClient, messages: list[Message]):
                 if not target:
                     targets.append(id)
         if targets:
-            messages = list(filter(lambda m: m.grouped_id == message.grouped_id, target_messages))
             message = (await client.forward_messages(main_chat, messages = messages))[-1]
             for target in targets:
                 await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
