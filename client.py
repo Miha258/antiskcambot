@@ -40,18 +40,25 @@ async def process_message(client: TelegramClient, messages: list[Message]):
     message_text = messages[0].message  
     user_id = await get_user_id(message_text)
     if user_id:
-        user_id = int(user_id)
-        target = await Blacklist.get_by_id(user_id)
-        if not target:
-            m = (await client.forward_messages(main_chat, messages = messages))[0]
-            await Blacklist.add(user_id, "", f"https://t.me/c/{m.peer_id.channel_id}/{m.id}")
-            return m
+        user_ids = await get_user_id(user_id)
+        targets = []
+        if user_ids:
+            for id in user_ids:
+                user_id = int(id)
+                target = await Blacklist.get_by_id(user_id)
+                if not target:
+                    targets.append(id)
+        if targets:
+            messages = list(filter(lambda m: m.grouped_id == message.grouped_id, target_messages))
+            message = (await client.forward_messages(main_chat, messages = messages))[-1]
+            for target in targets:
+                await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
 
 async def copy_messages(client: TelegramClient):
     for chat in view_channels():
         target_messages = await client.get_messages(chat, limit = 1000)
         for message in target_messages:
-            try:
+            # try:
                 user_ids = await get_user_id(message.message)
                 targets = []
                 if user_ids:
@@ -66,9 +73,8 @@ async def copy_messages(client: TelegramClient):
                     for target in targets:
                         await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
                     await asyncio.sleep(randint(60, 180))
-            except Exception as e:
-                await asyncio.sleep(randint(60, 180))
-                print(e)
+            # except Exception as e:
+            #     print(e)
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client: 
