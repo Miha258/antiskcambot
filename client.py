@@ -53,14 +53,15 @@ async def process_message(client: TelegramClient, messages: list[Message]):
             for target in targets:
                 await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
 
+
 async def copy_messages(client: TelegramClient):
     for chat in view_channels():
         target_messages = await client.get_messages(chat, limit = 1000)
         for message in target_messages:
-            try:
+            # try:
                 message_text = message.message
                 if isinstance(message_text, str) or isinstance (message_text, bytes):
-                    user_ids = await get_user_id(message.message)
+                    user_ids = await get_user_id(message_text)
                     targets = []
                     if user_ids:
                         for id in user_ids:
@@ -74,8 +75,8 @@ async def copy_messages(client: TelegramClient):
                         for target in targets:
                             await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
                         await asyncio.sleep(randint(60, 180))
-            except Exception as e:
-                print(e)
+            # except Exception as e:
+            #     print(e)
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client: 
