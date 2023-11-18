@@ -70,8 +70,9 @@ async def copy_messages(client: TelegramClient):
                             if not target:
                                 targets.append(user_id)
                         if targets:
+                            target_messages[0]
                             messages = list(filter(lambda m: m.grouped_id == message.grouped_id and not isinstance(m, MessageService), target_messages))
-                            print(len(messages))
+                            print(messages[0])
                             if messages:
                                 message = (await client.forward_messages(main_chat, messages = messages))[-1]
                                 for target in targets:
