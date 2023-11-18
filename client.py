@@ -58,7 +58,7 @@ async def copy_messages(client: TelegramClient):
     for chat in view_channels():
         target_messages = await client.get_messages(chat, limit = 1000)
         for message in target_messages:
-            # try:
+            try:
                 message_text = message.message
                 if isinstance(message_text, str) or isinstance(message_text, bytes):
                     user_ids = await get_user_id(message_text)
@@ -70,17 +70,17 @@ async def copy_messages(client: TelegramClient):
                             if not target:
                                 targets.append(user_id)
                         if targets:
-                            target_messages[0]
-                            messages = list(filter(lambda m: m.grouped_id and m.grouped_id == message.grouped_id and not isinstance(m, MessageService), target_messages))
-                            for m in messages:
-                                print(m.grouped_id)
+                            if message.grouped_id:
+                                messages = list(filter(lambda m: m.grouped_id and m.grouped_id == message.grouped_id and not isinstance(m, MessageService), target_messages))
+                            else:
+                                messages = [message]
                             if messages:
                                 message = (await client.forward_messages(main_chat, messages = messages))[-1]
                                 for target in targets:
                                     await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
                                 await asyncio.sleep(randint(60, 180))
-            # except TypeError as e:
-            #     print(e)
+            except TypeError as e:
+                print(e)
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client: 
