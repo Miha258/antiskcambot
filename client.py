@@ -54,7 +54,7 @@ async def process_message(client: TelegramClient, messages: list[Message]):
 
 async def copy_messages(client: TelegramClient):
     for chat in view_channels():
-        target_messages = await client.get_messages(chat, limit = 1000)
+        target_messages = await client.get_messages(chat, limit = 3000)
         for message in target_messages:
             try:
                 message_text = message.message
