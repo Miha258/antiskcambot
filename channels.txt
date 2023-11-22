@@ -5,3 +5,4 @@
 @dealwithcaution
 @kidok_list
 @scamlist_sa
+@SafeBlackList
