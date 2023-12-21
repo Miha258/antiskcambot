@@ -92,22 +92,21 @@ async def copy_messages(client: TelegramClient):
 
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client:
-        print(12345) 
-        # for chat in view_channels():
-        #     try:
-        #         await client(JoinChannelRequest(chat))
-        #     except Exception as e:
-        #         print(f'Cant join to {chat}')
+        for chat in view_channels():
+            try:
+                await client(JoinChannelRequest(chat))
+            except Exception as e:
+                print(f'Cant join to {chat}')
         await clear_messages(client)
-        # asyncio.get_event_loop().create_task(copy_messages(client))
-        # @client.on(events.Album(chats = view_channels()))
-        # async def event_handler(event: events.Album.Event):
-        #     await process_message(client, event.chat)
+        asyncio.get_event_loop().create_task(copy_messages(client))
+        @client.on(events.Album(chats = view_channels()))
+        async def event_handler(event: events.Album.Event):
+            await process_message(client, event.chat.username)
 
-        # @client.on(events.NewMessage(chats = view_channels()))
-        # async def event_handler(event: events.NewMessage.Event):
-        #     await process_message(client, event.chat)
-        # await client.run_until_disconnected()
+        @client.on(events.NewMessage(chats = view_channels()))
+        async def event_handler(event: events.NewMessage.Event):
+            await process_message(client, event.chat)
+        await client.run_until_disconnected()
 
 
 if __name__ == '__main__':
