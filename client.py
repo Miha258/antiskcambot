@@ -36,8 +36,9 @@ async def search_user(username):
         except Exception as e:
               print(f"Error: {e}")
 
-async def process_message(client: TelegramClient, messages: list[Message]):
-    message_text = messages[0].message  
+async def process_message(client: TelegramClient, chat: str):
+    target_messages = await client.get_messages(chat, limit = 10)
+    message_text = messages = list(filter(lambda m: m.grouped_id and m.grouped_id == message.grouped_id and not isinstance(m, MessageService), target_messages))
     user_ids = await get_user_id(message_text)
     targets = []
     if user_ids:
@@ -51,6 +52,15 @@ async def process_message(client: TelegramClient, messages: list[Message]):
         for target in targets:
             await Blacklist.add(target, "", f"https://t.me/c/{message.peer_id.channel_id}/{message.id}")
 
+async def clear_messages(client: TelegramClient):
+    target_messages = await client.get_messages(main_chat, limit = 1000)
+    links = []
+    for user in await Blacklist.all():
+        links.append(user['link'])
+    for message in target_messages:
+        link = f"https://t.me/c/{message.peer_id.channel_id}/{message.id}"
+        if link not in links:
+            print(link)
 
 async def copy_messages(client: TelegramClient):
     for chat in view_channels():
@@ -81,22 +91,23 @@ async def copy_messages(client: TelegramClient):
                 print(e)
 
 async def main():
-    async with TelegramClient('./session_file.session', api_id, api_hash) as client: 
-        for chat in view_channels():
-            try:
-                await client(JoinChannelRequest(chat))
-            except Exception as e:
-                print(f'Cant join to {chat}')
-        
-        asyncio.get_event_loop().create_task(copy_messages(client))
-        @client.on(events.Album(chats = view_channels()))
-        async def event_handler(event: events.Album.Event):
-            await process_message(client, event.messages)
+    async with TelegramClient('./session_file.session', api_id, api_hash) as client:
+        print(12345) 
+        # for chat in view_channels():
+        #     try:
+        #         await client(JoinChannelRequest(chat))
+        #     except Exception as e:
+        #         print(f'Cant join to {chat}')
+        await clear_messages(client)
+        # asyncio.get_event_loop().create_task(copy_messages(client))
+        # @client.on(events.Album(chats = view_channels()))
+        # async def event_handler(event: events.Album.Event):
+        #     await process_message(client, event.chat)
 
-        @client.on(events.NewMessage(chats = view_channels()))
-        async def event_handler(event: events.NewMessage.Event):
-            await process_message(client, [event.message])
-        await client.run_until_disconnected()
+        # @client.on(events.NewMessage(chats = view_channels()))
+        # async def event_handler(event: events.NewMessage.Event):
+        #     await process_message(client, event.chat)
+        # await client.run_until_disconnected()
 
 
 if __name__ == '__main__':
