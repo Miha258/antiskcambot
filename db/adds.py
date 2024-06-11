@@ -48,7 +48,6 @@ class AddsShown():
 
     @classmethod
     async def show_for(cls, user_id: int, adds_id: int):
-        print(int(uuid.uuid4()))
         return await db.create_record(cls.table, id = int(str(uuid.uuid4().int)[:16]), user_id = user_id, adds_id = adds_id)
     
 
@@ -56,5 +55,4 @@ class AddsShown():
     async def is_shown_for(cls, user_id: int, adds_id: int):
         adds = await db.read_record(cls.table, "adds_id", adds_id, True)
         if adds:
-            print(adds)
             return list(filter(lambda user: user['user_id'] == user_id, adds))
