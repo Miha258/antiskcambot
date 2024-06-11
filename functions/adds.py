@@ -45,7 +45,6 @@ def get_calendar(lang: str, month: int = 0):
         types.InlineKeyboardButton(months[lang][date.month + month - 1], callback_data = "current_month"),
         types.InlineKeyboardButton(months_buttons["next"][lang], callback_data = "next_month"),
     )
-
     return inline_markup
 
   
@@ -69,62 +68,64 @@ async def ask_for_time(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id) 
     await state.update_data({"text": message.text})
     await state.set_state(SendInfo.SET_TIME)
-    await message.answer(adds["set_time"][lang], reply_markup = get_calendar(lang))
+    await message.answer(adds["set_time"][lang], reply_markup = get_calendar(lang), parse_mode = "html")
 
 
 async def ask_for_count(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
-    date_time_regex = r'\d{2}:\d{2}' 
+    date_time_regex = r'\d{2}:\d{2}'
     async with state.proxy() as data:
-        if not data.get("date"):
+        if not data.get("date") and data['type'] != "users":
             return await message.answer(adds["set_date"][lang])
         
-        date_obj = datetime.strptime(data['date'], "%Y-%m-%d")
+        date_obj = datetime.strptime(data.get('date'), "%Y-%m-%d")
         time_obj = datetime.strptime(message.text, "%H:%M")
+        date = datetime.combine(date_obj.date(), time_obj.time())
+        data["date"] = date
+
+        if data['type'] == "users":
+            await state.set_state(SendInfo.SET_FORWARD_MESSAGE)
+            await message.answer(adds["send_forward_message"][lang])
+            return
         
         if re.search(date_time_regex, message.text): 
-            date = datetime.combine(date_obj.date(), time_obj.time())
-            await state.update_data({"time": date})
             await state.set_state(SendInfo.SET_COUNT)
             await message.answer(adds["set_count"][lang])
         else:
             await message.answer(adds["set_time_error"][lang])
 
 
-async def send_adds_to_users(text: str, media: types.PhotoSize | types.Video, date: datetime.date):
-    users = await Users.all()
-    while datetime.now() < date: await asyncio.sleep(1)
-    
-    for channel in users:
-        if media:
-            if isinstance(media, types.PhotoSize):
-                await bot.send_photo(channel, media.file_id, text)
-            elif isinstance(media, types.Video):
-                await bot.send_video(channel, media.file_id, text)
-        else:
-            await bot.send_message(channel, text)
-   
+async def send_adds_to_users(message: types.Message, state: FSMContext):
+    await state.finish()
+    lang = get_language(message.from_id)
+    counter = 0
+    async with state.proxy() as data: 
+        users = await Users.all()
+        while datetime.now() < data['date']: await asyncio.sleep(1)
+        counter = 0
+        if message.forward_from_chat:
+            for channel in users:
+                try:
+                    await message.forward(channel['id'])
+                    counter += 1
+                except:
+                    await message.answer(adds["count"][lang](counter), parse_mode = "html")
+    await message.answer()
 
 async def send_message_with_delay(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     async with state.proxy() as data:
-        type = data.get('type')
         text = data.get('text')
         time = data.get('time')
         media = data.get('media')
         count = int(message.text)
-    
-        if type == "users":
-            loop = asyncio.get_event_loop()
-            loop.create_task(send_adds_to_users(text, media, time))
-            
-        elif type == "channels":
-            media_data = None
-            if media:
-                file = await bot.get_file(media.file_id)
-                media_data = await fetch_media_bytes(await file.get_url())
-            
-            await Adds.add(message.message_id, text, time, count, media_data)
+        media_data = None
+        if media:
+            file = await bot.get_file(media.file_id)
+            media_data = await fetch_media_bytes(await file.get_url())
+        
+        media_type = 'photo' if isinstance(media, types.PhotoSize) else 'video'
+        await Adds.add(message.message_id, text, time, count, media_data, media_type)
 
         await message.answer(adds["created"][lang](time), parse_mode = "html")
         await state.finish()
@@ -134,7 +135,9 @@ def register_adds(dp: Dispatcher):
     dp.register_callback_query_handler(set_calendar_month, lambda cb: cb.data in ["prev_month", "next_month"], state = SendInfo.SET_TIME)
     dp.register_message_handler(ask_for_count, state = SendInfo.SET_TIME)
     
+    dp.register_message_handler(send_adds_to_users, state = SendInfo.SET_FORWARD_MESSAGE)
     dp.register_message_handler(skip_media, lambda m: m.text in skip.values(), state = SendInfo.SET_MEDIA)
     dp.register_message_handler(ask_for_text, state = SendInfo.SET_MEDIA, content_types = types.ContentTypes.PHOTO | types.ContentTypes.VIDEO)
     dp.register_message_handler(ask_for_time, state = SendInfo.SET_TEXT)
     dp.register_message_handler(send_message_with_delay, state = SendInfo.SET_COUNT) 
+

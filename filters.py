@@ -11,7 +11,16 @@ class IsAdminFilter(BoundFilter):
 
     async def check(self, message: types.Message):
         admins = get_admins() 
-        return message.from_id in admins 
+        return str(message.from_id) in admins 
+    
+
+class IsSuperAdminFilter(BoundFilter):
+    key = 'is_super_admin'
+
+    async def check(self, message: types.Message):
+        su_admins = get_su_admins() 
+        return str(message.from_id) in su_admins
+
 
 class IsDM(BoundFilter):
     key = 'is_dm'

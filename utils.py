@@ -7,10 +7,21 @@ def add_admin(id: str):
     with open("config.json", "r", encoding="utf-8") as file:
         data = json.load(file)
     
-    data["admins"].append(id)
+    data["admins"].append(str(id))
 
     with open("config.json", "w", encoding = "utf-8") as file:
         json.dump(data, file, ensure_ascii = False, indent = 2)
+
+
+def delete_admin(id: str):
+    with open("config.json", "r", encoding="utf-8") as file:
+        data = json.load(file)
+    
+    data["admins"].remove(str(id))
+
+    with open("config.json", "w", encoding = "utf-8") as file:
+        json.dump(data, file, ensure_ascii = False, indent = 2)
+
 
 
 def get_admins():
@@ -18,6 +29,13 @@ def get_admins():
         data = json.load(file)
     
     return data["admins"]
+
+
+def get_su_admins():
+    with open("config.json", "r", encoding = "utf-8") as file:
+        data = json.load(file)
+    
+    return data["su_admins"]
 
 
 async def get_username(message: types.Message):
@@ -47,6 +65,13 @@ def update_channel(channel):
     with open(channels_file, 'a') as file:
         file.write(channel + "\n")
 
+def delete_channel(channel):
+    with open(channels_file, 'r') as file:
+        channels = file.readlines()
+    with open(channels_file, 'w') as file:
+        channels.remove(channel)
+        file.write("".join(channels))
+    
 
 def remove_channel(channel):
     with open(channels_file, 'r') as file:

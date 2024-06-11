@@ -60,58 +60,74 @@ skip = {
     "RU": "Попустить"
 }
 
+send = {
+    "EN": 'Send',
+    "RU": 'Отправить'
+}
 
 menu = {
   "EN": [
-    "Change language on RU",
-    "Verify User",
-    "Submit Complaint",
-    "Premium Features",
-    "Support",
-    "Our Chat",
-    "Our Projects",
+    "🔎 Verify User",
+    "📨 Submit Complaint",
+    "⭐️ Premium Features",
+    "👨‍💻 Support",
+    "💬 Our Chat",
+    "🏴‍☠️ Our Projects",
+    "🇷🇺 Change language on RU",
   ],
   "RU": [
-    "Изменить язык на EN",
-    "Проверить пользователя",
-    "Подать жалобу",
-    "Премиум возможности",
-    "Поддержка",
-    "Наш чат",
-    "Наши проекты",
+    "🔎 Проверить пользователя",
+    "📨 Подать жалобу",
+    "⭐️ Премиум возможности",
+    "👨‍💻 Поддержка",
+    "💬 Наш чат",
+    "🏴‍☠️ Наши проекты",
+    "🇬🇧 Изменить язык на EN",
   ]
 }
 
+su_admin_menu = {
+    "EN": [
+        "👁️ Add Administrator",
+        "⛔ Remove Administrator",
+        "📈 Add blacklist",
+        "📉 Remove blacklist",
+        "📁 Blacklists",
+        "📢 Send Advertisement",
+        "🌚 Send Advertisement in Reactions",
+    ],
+    "RU": [
+        "👁️ Добавить администратора",
+        "⛔ Удалить администратора",
+        "📁 Список блэклистов",
+        "📈 Добавить блэклист",
+        "📉 Удалить блэклист",
+        "📢 Рекламное сообщение",
+        "🌚 Рекламное сообщение в реакциях",
+    ]
+}
 
 admin_menu = {
     "EN": [
-        "Add to Database",
-        "Channel list"
-        "Delete from Database",
-        "Subscribtions on Bot",
-        "Subscribtions in Chats",
-        "Send Advertisement",
-        "Add Administrator",
-        "Add Channel",
-        "Channel list",
-        "Send Advertisement in Reactions",
+        "➕ Add to Database",
+        "➖ Delete from Database",
+        "👤 Subscribtions on Bot",
+        "👁️‍🗨️ Subscribtions in Chats",
     ],
     "RU": [
-        "Добавить в базу",
-        "Добавить канал",
-        "Удалить из базы",
-        "Подписки юзеров",
-        "Подписки бота в чатах",
-        "Рекламное сообщение",
-        "Добавить администратора",
-        "Добавить канал",
-        "Список каналов",
-        "Рекламное сообщение в реакциях",
+        "➕ Добавить в базу",
+        "➖ Удалить из базы",
+        "👤 Подписки юзеров",
+        "👁️‍🗨️ Подписки бота в чатах",
     ]
 }
     
 
 user = {
+    "username_not_found": {
+        "EN": "Can`t find user with this username.Try again:",
+        "RU": "Не могу найти юзера с таким юзернеймом.Попробуйте еще раз:"
+    },
     "enter_username": {
         "EN": "Enter target @username or id:",
         "RU": "Введите @username или id человека:"
@@ -124,17 +140,17 @@ user = {
         "EN": "Invalid username or id.Try again:",
         "RU": "Неправильный username или id"
     },
-    "already_exsists":{
+    "already_exsists": {
         "EN": "User already in database",
         "RU": "Человек уже есть в базе"
     },
-    "not_found":{
+    "not_found": {
         "EN": "User not found",
         "RU": "Человек не найден в базе"
     },
     "added": {
         "EN": "User saved in database",
-        "RU": "Человек успешно сохранен в бд"
+        "RU": "Человек успешно сохранен в базу"
     },
     "reason": {
         "EN": "Enter reason:",
@@ -142,7 +158,7 @@ user = {
     },
     "deleted": {
         "EN": "User removed from database",
-        "RU": "Человек был успешно удален с бд"
+        "RU": "Человек был успешно удален с базы"
     },    
     "invalid_link": {
         "EN": "Invalid blacklist url.Try again:",
@@ -160,29 +176,61 @@ admin = {
         "EN": "Admin is already in list.Try again:",
         "RU": "Админ уже есть в списке.Поробуйте еще раз:"
     },
+    "not_exist": {
+        "EN": "This user is not admin",
+        "RU": "Пользователь не является админом"
+    },
     "added": {
         "EN": "Admin added successfully",
         "RU": "Админ успешно добавлен"
+    },
+    "removed": {
+        "EN": "Admin removed successfully",
+        "RU": "Админ успешно удален"
+    },
+    "username_not_found": {
+        "EN": "Username not found.Try again:",
+        "RU": "Юзернейм не найден.Попробуйте еще раз:"
     }
 }
 
 
 channels = {
     "enter": {
-        "EN": "Enter channel <b>@name</b>",
-        "RU": "Введите <b>@названиe</b> канала"
+        "EN": "Enter blacklist invite link:",
+        "RU": "Введите инвайт на блэклист:"
+    },
+    "enter_username": {
+        "EN": "Enter blacklist username:",
+        "RU": "Введите юзернейм блеклиста:"
+    },
+    "not_exist": {
+        "EN": "Can`t found this blacklist in list.Try again:",
+        "RU": "Не могу найти такой бэклист в списке.Поробуйте еще раз:"
     },
     "list": {
         "EN": lambda channels_list: f"Channel list: {channels_list}",
         "RU": lambda channels_list: f"Список канолов: {channels_list}"
     },
     "already_exist": {
-        "EN": "Channel is already in list.Try again:",
-        "RU": "Канал уже есть в списке.Поробуйте еще раз:"
+        "EN": "Blacklist is already in list.Try again:",
+        "RU": "Блэклист уже есть в списке.Поробуйте еще раз:"
+    },
+    "invalid_url": {
+        "EN": "Invalid invite url or expired.Try again:",
+        "RU": "Неверный URL приглашения или срок его действия истек. Повторите попытку:"
+    },
+    "already_in_chat": {
+        "EN": "Can`t joint to chat because I'm already is participant",
+        "RU": "Не могу присоединиться к блэклисту, потому что я уже участник"
     },
     "added": {
-        "EN": "Channel added successfully",
-        "RU": "Канал успешно добавлен"
+        "EN": "Blacklist added successfully",
+        "RU": "Блэклист успешно добавлен"
+    },
+    "removed": {
+        "EN": "Blacklist removed successfully",
+        "RU": "Блэклист успешно удален"
     }
 }
 
@@ -196,13 +244,13 @@ blacklist = {
 premium_options = {
     "description": {
     "EN": """
-The premium features of the bot include connection to the chat "cleansing from scammers" for $10 and
+The premium features of the bot include connection to the group "cleansing from scammers" for $10 and
 monthly payment in the form of $20
 for "autodeletion of scammers". 
 <b>Payment is accepted in BTC, ETH, USDT TRC20 and other cryptocurrencies</b>
 """,
     "RU": """
-В премиум возможности бота входит подключение к чату "чистки от скамеров" за 10$ и
+В премиум возможности бота входит подключение к группе "чистки от скамеров" за 10$ и
 ежемесячная оплата в виде 20$
 за "автоудаление скамеров".
 <b>Оплата приимается в BTC, ETH, USDT TRC20 и прочих криптовалютах.</b>
@@ -221,43 +269,51 @@ for "autodeletion of scammers".
     },
     "scammer_cleaning": {
         "EN": "Clean scammers",
-        "RU": "Очистку чата от скамеров"
+        "RU": "Очистку группы от скамеров"
+    },
+    "choose_currency": {
+        "EN": "Select system:",
+        "RU": "Выберите систему:"
     },
     "enter_chat_id": {
-        "EN": "Now enter your channel id\n<b>To get your chat id use /chat_id in your channel</b>",
-        "RU": "Теперь введите айди вашего чата.<b>Чтобы получить айди чата, используйте /chat_id на своем канале</b>"
+        "EN": "Now enter your group id.\n<b>To get id use /chat_id in your group</b>",
+        "RU": "Теперь введите айди вашей группы.\n<b>Чтобы получить айди, используйте /chat_id в своей группе</b>"
     },
     "chat_error": {
-        "EN": "Can`t find this chat.Maybe I'm not a member of this chat",
-        "RU": "Не могу найти чат.Возможно я не участник этого чата"
+        "EN": "Can`t find this group.Maybe I'm not a member of this group",
+        "RU": "Не могу найти группы.Возможно я не участник этого группы"
     },
     "chat_not_found": {
-        "RU": "Я должен быть участником этого канала",
-        "EN": "I must be particpant of this channel"
+        "RU": "Я должен быть участником этой группы",
+        "EN": "I must be particpant of this group"
     },  
     "admin_error": {
-        "EN": "I must be administartor in this channel",
-        "RU": "Я должен быть администратором в этом канале"
+        "EN": "I must be administartor in this group",
+        "RU": "Я должен быть администратором в этой группе"
     },
     "pay_link": {
         "EN": lambda url: f'Folow this <a href="{url}">link</a> to pay',
         "RU": lambda url: f'Перейдите по <a href="{url}">ссылке</a> для оплаты'
     },
     "scammer_removed": {
-        "EN": lambda mention: f"<b>Scammer {mention} was removed from your channel!</b>",
-        "RU": lambda mention: f"<b>Скамер {mention} был удален с вашеого канала!</b>"
+        "EN": lambda mention: f"<b>Scammer {mention} was removed from your chat!</b>",
+        "RU": lambda mention: f"<b>Скамер {mention} был удален с вашей группы!</b>"
     },
     "total_removed": {
         "EN": lambda count: f"Total removed: <b>{count} scammers</b>",
         "RU": lambda count: f"Всеого удалено: <b>{count} скамеров</b>"
     },
     "auto_delete_paynamnet": {
-        "EN": lambda channel: f"You <b>succesfully</b> bought \"auto deleting scammers\" in channel: <b>{channel}</b>",
-        "RU": lambda channel: f"Вы <b>успешно</b> купили \"чистку от скамеров\" в канале: <b>{channel}</b>"
+        "EN": lambda channel, option: f"You <b>succesfully</b> bought \"{option}\" in group: <b>{channel}</b>",
+        "RU": lambda channel, option: f"Вы <b>успешно</b> купили \"{option}\" в группе: <b>{channel}</b>"
     },
     "scammer_cleaning_paynamnet": {
-        "EN": lambda channel: f"You <b>succesfully</b> bought \"scammer cleaning\" in channel: <b>{channel}</b>",
-        "RU": lambda channel: f"Вы <b>успешно</b> купили \"чистку от скамеров\" в канале:  <b>{channel}</b>"
+        "EN": lambda channel: f"You <b>succesfully</b> bought \"scammer cleaning\" in group: <b>{channel}</b>",
+        "RU": lambda channel: f"Вы <b>успешно</b> купили \"чистку от скамеров\" в группе:  <b>{channel}</b>"
+    },
+    "scammer_cleaning_processing": {
+        "EN": "<b>Checking database for scammers in your group...</b>",
+        "RU": "<b>Проверка базы данных на скамеров в вашем группе...</b>"
     },
     "subscription_exist": {
         "EN": lambda to: f"You already have auto deleting subscription to: <b>{to}</b>",
@@ -266,6 +322,14 @@ for "autodeletion of scammers".
     "subscription_ended": {
         "EN": "<b>Your premium subscription on auto deleting has been ended</b>",
         "RU": "<b>Ваша премиальная подписка на автоматическое удаление завершена</b>"
+    },
+    "failde_paynament": {
+        "EN": "<b>Произошла проблема, у вас не прошел платеж!</b>",
+        "RU": "<b>There was a problem, your payment failed!</b>",
+    },
+    "processing_paynament": {
+        "EN": "Your payment is being processed, please try to check it later",
+        "RU": "Ваш платеж обрабатывается, попробуйте проверить его чуть позже"
     }
 }
 
@@ -275,10 +339,24 @@ check_button = {
 }
 
 
+pay = {
+    "RU": "Оплатить",
+    "EN": "Pay"
+}
+
+
 about_urls = {
     "support": {
-        "EN": "Our support",
-        "RU": "Наша поддержка"
+        "EN": "Discribe your question:",
+        "RU": "Опишите ваш вопрос:"
+    },
+    "support_accepted": {
+        "EN": "Your question has been sent to support, please wait for a response!",
+        "RU": "Ваш вопрос был передан в саппорт, ждите ответа!"
+    },
+    "notify_support": {
+        "EN": lambda from_user, question: f"Question to support from {from_user}:\n{question}",
+        "RU": lambda from_user, question: f"Вопрос в саппорт от {from_user}:\n{question}",
     },
     "chat": {
         "EN": "Our chat",
@@ -295,6 +373,10 @@ about_urls = {
 }
 
 adds = {
+     "send_forward_message": {
+        "EN": "Forward advertisement message from channel:",
+        "RU": "Перешлите пост из канала:"
+    },
     "send_media": {
         "EN": "Send the photo/video of advertisement",
         "RU": "Отправьте фото/видео объявление"
@@ -304,16 +386,16 @@ adds = {
         "RU": "Отправьте текст объявление"
     },
     "set_time": {
-        "RU": "Теперь введите время отправки объявление в формате «2023.06.03 22:23» (например, 14:30).",
-        "EN": "Now enter the time to send the advertisement in the format '2023.06.03 22:23' (eg 14:30)."
+        "RU": "Теперь виберите время отправки объявление.Потом введите время в формате <strong>HH:MM</strong>",
+        "EN": "Now enter the date to send the advertisement.After that enter time in format  <strong>HH:MM</strong>"
     },
     "set_time_error": {
         "RU": "Time format must be 00:00",
         "EN": "Формат времени должен быть 00:00"
     },
     "set_date": {
-        "RU": "Enter shows count",
-        "EN": "Введите количество показов"
+        "EN": "Enter shows count",
+        "RU": "Введите количество показов"
     },
     "set_count": {
         "EN": "Enter shows count",
@@ -326,7 +408,11 @@ adds = {
     "created": {
         "EN": lambda date: f"Advertiment will be published at <b>{date}</b>",
         "RU": lambda date: f"Объявление будет опубликовано <b>{date}</b>",
-    }
+    },
+    "count": {
+        "EN": lambda count: f"The number of successful shipments: <b>{count}</b>",
+        "RU": lambda count: f"Количество успешных отправлений <b>{count}</b>",
+    },
 } 
 
 reports = {
@@ -343,9 +429,33 @@ reports = {
         "RU": "Ваш репорт отправлен. Дождитесь одобрения"
     },
     "report_form": {
-        "EN": lambda t_id, t_username, u_id, u_username, url, time: f"{f'Target Username: {t_username}' if t_username else f'Target ID: <b>{t_id}</b>'}\nAuthor ID: <b>{u_id}</b>\nAuthor Username: {u_username}\nBlackilist link <b>{url}</b>\n Adding date: <b>{time}</b>",
-        "RU": lambda t_id, t_username, u_id, u_username, url, time: f"{f'Юзернейм скамера: {t_username}' if t_username else f'Айди скамера: <b>{t_id}</b>'}\nАйди автора: <b>{u_id}</b>\nЮзернейм автора: {u_username}\nСсылка на блек: <b>{url}</b>\nДата добавления: <b>{time}</b>"
-    }
+        "EN": lambda t_id, t_username, u_id, u_username, url, time: f"Target Username: {t_username}\nTarget ID: <b>{t_id}</b>\nAuthor ID: <b>{u_id}</b>\nAuthor Username: {u_username}\nBlackilist link <b>{url}</b>\n Adding date: <b>{time}</b>",
+        "RU": lambda t_id, t_username, u_id, u_username, url, time: f"Юзернейм скамера: {t_username}\nАйди скамера: <b>{t_id}</b>\nАйди автора: <b>{u_id}</b>\nЮзернейм автора: {u_username}\nСсылка на блек: <b>{url}</b>\nДата добавления: <b>{time}</b>"
+    },
+    "photo_added": {
+        "EN": "Photo have been added",
+        "RU": "Фото добавлено"
+    },
+    "report_approved": {
+        "EN": "Report has been approved",
+        "RU": "Репорт одобрен успешно"
+    },
+    "report_approve_btn": {
+        "EN": "Approve",
+        "RU": "Одобрить"
+    },
+    "report_disapproved": {
+        "EN": "Report has been disapproved",
+        "RU": "Репорт успешно отклонен"
+    },
+    "report_disapprove_btn": {
+        "EN": "Disapprove",
+        "RU": "Отклонить"
+    },
+    "report_inactive": {
+        "EN": "This report already have been handled",
+        "RU": "Этот репорт уже был обработан"
+    },
 }
 
 months = {

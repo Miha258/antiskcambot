@@ -7,7 +7,8 @@ from utils import get_user_id
 from random import randint
 import os, dotenv
 from db.blacklist import Blacklist
-from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.channels import LeaveChannelRequest, JoinChannelRequest
 from telethon.tl.patched import MessageService
 
 dotenv.load_dotenv()
@@ -27,9 +28,6 @@ async def login(client):
 
 async def search_user(username):
     async with TelegramClient('./session_file.session', api_id, api_hash) as client:
-        await client.connect()
-        await login(client)
-
         try:
             user = await client.get_entity(username)
             return user.id
@@ -40,6 +38,7 @@ async def process_message(client: TelegramClient, messages: list[Message]):
     message_text = messages[0].message  
     user_ids = await get_user_id(message_text)
     targets = []
+
     if user_ids:
         for id in user_ids:
             user_id = int(id)
@@ -84,22 +83,39 @@ async def copy_messages(client: TelegramClient):
             except Exception as e:
                 print(e)
 
+
+async def join_to_chat(url: str):
+    async with TelegramClient('./session_file.session', api_id, api_hash) as client:
+        try:
+            res = await client(ImportChatInviteRequest(url.split('+')[1]))
+            return res.chats[0].username
+        except IndexError:
+            channel = url.split('/')[-1]
+            res = await client(JoinChannelRequest(channel = channel))
+            return channel
+    
+
+
+async def leave_from_chat(username: str):
+    async with TelegramClient('./session_file.session', api_id, api_hash) as client:
+        await client(LeaveChannelRequest(username))
+
 async def main():
     async with TelegramClient('./session_file.session', api_id, api_hash) as client:
-        for chat in view_channels():
-            try:
-                await client(JoinChannelRequest(chat))
-            except Exception as e:
-                print(f'Cant join to {chat}')
-        await clear_messages(client)
-        asyncio.get_event_loop().create_task(copy_messages(client))
-        @client.on(events.Album(chats = view_channels()))
-        async def event_handler(event: events.Album.Event):
-            await process_message(client, event.messages)
+        # for chat in view_channels():
+        #     try:
+        #         await client(JoinChannelRequest(chat))
+        #     except Exception as e:
+        #         print(f'Cant join to {chat}')
+        # await clear_messages(client)
+        # asyncio.get_event_loop().create_task(copy_messages(client))
+        # @client.on(events.Album(chats = view_channels()))
+        # async def event_handler(event: events.Album.Event):
+        #     await process_message(client, event.messages)
 
-        @client.on(events.NewMessage(chats = view_channels()))
-        async def event_handler(event: events.NewMessage.Event):
-            await process_message(client, [event.message])
+        # @client.on(events.NewMessage(chats = view_channels()))
+        # async def event_handler(event: events.NewMessage.Event):
+        #     await process_message(client, [event.message])
         await client.run_until_disconnected()
 
 

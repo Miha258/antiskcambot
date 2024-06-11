@@ -8,34 +8,75 @@ from keyborads import *
 from client import *
 from db.blacklist import Blacklist
 from db.adds import *
-from random import randint
 from keyborads import main_menu
 
+
+async def show_adds_for_user(message: types.Message):
+    adds = list(filter(lambda add: datetime.now() > datetime.strptime(add.get("date"), "%Y-%m-%d %H:%M:%S"), await Adds.all()))
+    add = adds[0]
+    print(add)
+    if adds and not await AddsShown.is_shown_for(message.from_id, add["id"]):
+        if add.get("count") == 0:
+            await Adds.remove(add.get("id"))
+        else:
+            if datetime.now() > datetime.strptime(add.get("date"), "%Y-%m-%d %H:%M:%S"):
+                media = add.get("media")
+                text = add.get("text")
+                await Adds.set_count(add.get("id"), add.get("count") - 1)
+                await AddsShown.show_for(message.from_id, add["id"])
+                if media:
+                    media_type = add["media_type"]
+                    if media_type == 'photo':
+                        await message.answer_photo(media, text)
+                    elif media_type == 'video':
+                        await message.answer_video(media, text)
+                else:
+                    await message.answer(text)
+
+
 async def verify_user(message: types.Message, state: FSMContext):
+    await state.finish()
     lang = get_language(message.from_id)
     username = await get_username(message)
     user_id = await get_user_id(message.text, True)
     
+    await show_adds_for_user(message)
     if not username and not user_id:
         await message.answer(user["invalid_data"][lang])
     else:
-        target = await Blacklist.get_by_username(username) or await Blacklist.get_by_id(user_id)
+        target = await search_user(username)
         if target: 
-            id = target.get("id")
-            usarname = target.get("username")
-            added_in = target.get("added_in")
-            link = target.get("link")
-            await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in, link), parse_mode = "html", reply_markup = await main_menu(message, lang))
+            target = await Blacklist.get_by_id(target)
+            if target:
+                id = target.get("id")
+                usarname = target.get("username")
+                added_in = target.get("added_in")
+                link = target.get("link")
+                return await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in, link), parse_mode = "html", reply_markup = await main_menu(message, lang))
+            else:
+                return await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
         else:
-            await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
-        await state.finish()
+            if isinstance(user_id, list):
+                await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
+            elif isinstance(user_id, str):
+                target = await Blacklist.get_by_id(target)
+                if target:
+                    id = target.get("id")
+                    usarname = target.get("username")
+                    added_in = target.get("added_in")
+                    link = target.get("link")
+                    return await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in, link), parse_mode = "html", reply_markup = await main_menu(message, lang))
+                else:
+                    return await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
+            else:
+                await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
 
 
 async def add_to_database(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     username = await get_username(message)
     user_id = await get_user_id(message.text, True)
-    
+
     if not re.search(r'(https:\/\/\S+)', message.text):
         return await message.answer(user["invalid_link"][lang])
     
@@ -44,6 +85,8 @@ async def add_to_database(message: types.Message, state: FSMContext):
     target_id = None
     if username:
         target_id = await search_user(username)
+        if not target_id:
+            return await message.answer(user["username_not_found"][lang])
         target = await Blacklist.get_by_id(target_id)
     elif user_id:
         target_id = user_id
@@ -89,22 +132,7 @@ async def detect_scammer(message: types.Message):
         usarname = target.get("username")
         added_in = target.get("added_in")
         await message.reply(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in), parse_mode = "html")
-        
-        adds = list(filter(lambda add: datetime.now() > datetime.strptime(add.get("date"), "%Y-%m-%d %H:%M:%S"), await Adds.all()))
-        show = randint(0, 4)
-        
-        if adds and not show:
-            add = adds[0]
-            if add.get("count") == 0:
-                await Adds.remove(add.get("id"))
-            else:
-                if datetime.now() > datetime.strptime(add.get("date"), "%Y-%m-%d %H:%M:%S"):
-                    media = add.get("media")
-                    await Adds.set_count(add.get("id"), add.get("count") - 1)
-                    if media:
-                        await message.answer_photo(media, add.get("text"))
-                    else:
-                        await message.answer(add.get("text"))
+        await show_adds_for_user(message)
 
 
 def register_users(dp: Dispatcher):
