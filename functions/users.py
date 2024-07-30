@@ -13,25 +13,25 @@ from keyborads import main_menu
 
 async def show_adds_for_user(message: types.Message):
     adds = list(filter(lambda add: datetime.now() > datetime.strptime(add.get("date"), "%Y-%m-%d %H:%M:%S"), await Adds.all()))
-    add = adds[0]
-    print(add)
-    if adds and not await AddsShown.is_shown_for(message.from_id, add["id"]):
-        if add.get("count") == 0:
-            await Adds.remove(add.get("id"))
-        else:
-            if datetime.now() > datetime.strptime(add.get("date"), "%Y-%m-%d %H:%M:%S"):
-                media = add.get("media")
-                text = add.get("text")
-                await Adds.set_count(add.get("id"), add.get("count") - 1)
-                await AddsShown.show_for(message.from_id, add["id"])
-                if media:
-                    media_type = add["media_type"]
-                    if media_type == 'photo':
-                        await message.answer_photo(media, text)
-                    elif media_type == 'video':
-                        await message.answer_video(media, text)
-                else:
-                    await message.answer(text)
+    if adds:
+        add = adds[0]
+        if not await AddsShown.is_shown_for(message.from_id, add["id"]):
+            if add.get("count") == 0:
+                await Adds.remove(add.get("id"))
+            else:
+                if datetime.now() > datetime.strptime(add.get("date"), "%Y-%m-%d %H:%M:%S"):
+                    media = add.get("media")
+                    text = add.get("text")
+                    await Adds.set_count(add.get("id"), add.get("count") - 1)
+                    await AddsShown.show_for(message.from_id, add["id"])
+                    if media:
+                        media_type = add["media_type"]
+                        if media_type == 'photo':
+                            await message.answer_photo(media, text)
+                        elif media_type == 'video':
+                            await message.answer_video(media, text)
+                    else:
+                        await message.answer(text)
 
 
 async def verify_user(message: types.Message, state: FSMContext):

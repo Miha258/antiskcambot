@@ -20,14 +20,14 @@ async def send_support(message: types.Message):
 async def our_chat(message: types.Message):
     lang = get_language(message.from_id)
     await message.answer(about_urls["chat"][lang], reply_markup = types.InlineKeyboardMarkup(inline_keyboard=[
-        [types.InlineKeyboardButton(about_urls["folow"][lang], url = "https://telegram.org/apps")],
+        [types.InlineKeyboardButton(about_urls["folow"][lang], url = "https://t.me/closedlist")],
     ]))
 
 
 async def our_projects(message: types.Message):
     lang = get_language(message.from_id)
     await message.answer(about_urls["projects"][lang], reply_markup = types.InlineKeyboardMarkup(inline_keyboard=[
-        [types.InlineKeyboardButton(about_urls["folow"][lang], url = "https://telegram.org/apps")],
+        [types.InlineKeyboardButton(about_urls["folow"][lang], url = "https://t.me/closedlist")],
     ]))
 
 
