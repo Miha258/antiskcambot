@@ -1,5 +1,5 @@
-__pycache__
-db/__pycache__
+__pycache__/
+./db/__pycache__/
 functions/__pycache__
 blacklist.db    
 session_file.session
