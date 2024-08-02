@@ -47,7 +47,7 @@ async def start_command(message: types.Message):
     lang = get_language(message.from_id)
     if not await Users.get_by_id(message.from_id):
         await Users.add(message.from_id, message.from_user.username)
-    await message.answer(greeting[lang], reply_markup = await main_menu(message, lang)) 
+    await message.answer(greeting[lang], reply_markup = await main_menu(message.from_id, lang)) 
 
 
 @dp.message_handler(IsDM(True), commands = ["chat_id"])
@@ -60,7 +60,7 @@ async def start_command(message: types.Message):
 @dp.message_handler(IsDM(True), lambda m: m.text in back.values(), content_types = types.ContentTypes.TEXT, state = "*")
 async def main_options(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
-    await message.answer(choose_option[lang], reply_markup = await main_menu(message, lang)) 
+    await message.answer(choose_option[lang], reply_markup = await main_menu(message.from_id, lang)) 
     await state.finish()
 
 
@@ -72,11 +72,11 @@ async def process_button_click(message: types.Message, state: FSMContext):
         case "🇬🇧 Изменить язык на EN":
             lang = "EN"
             set_user_language(message.from_id, lang)
-            await message.answer(change_language[lang], reply_markup = await main_menu(message, lang))
+            await message.answer(change_language[lang], reply_markup = await main_menu(message.from_id, lang))
         case "🇷🇺 Change language on RU":
             lang = "RU"
             set_user_language(message.from_id, lang)
-            await message.answer(change_language[lang], reply_markup = await main_menu(message, lang))
+            await message.answer(change_language[lang], reply_markup = await main_menu(message.from_id, lang))
         case "📈 Добавить блэклист" | "📈 Add blacklist":
             await state.set_state(BotStates.ADD_CHANNEL)
             await message.answer(channels["enter"][lang], reply_markup = back_to_menu(lang), parse_mode = "html")
@@ -126,7 +126,7 @@ async def process_button_click(message: types.Message, state: FSMContext):
         case "🏴‍☠️ Наши проекты" | "🏴‍☠️ Our Projects":
             await our_projects(message)                  
         case _:
-            await message.answer(choose_option[lang], reply_markup = await main_menu(message, lang))
+            await message.answer(choose_option[lang], reply_markup = await main_menu(message.from_id, lang))
 
 
 async def on_startup(d):

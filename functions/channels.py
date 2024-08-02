@@ -12,7 +12,7 @@ from telethon.errors.rpcerrorlist import UserAlreadyParticipantError, InviteHash
 async def channels_list(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     
-    await message.answer(channels["list"][lang]("\n\n" + "".join(view_channels())), reply_markup = await main_menu(message, lang))
+    await message.answer(channels["list"][lang]("\n\n" + "".join(view_channels())), reply_markup = await main_menu(message.from_id, lang))
     await state.finish()
 
 
@@ -24,7 +24,7 @@ async def add_channel(message: types.Message, state: FSMContext):
         if channel in view_channels():
             return await message.answer(channels["already_exist"][lang])
         update_channel(channel)
-        await message.answer(channels["added"][lang], reply_markup = await main_menu(message, lang))
+        await message.answer(channels["added"][lang], reply_markup = await main_menu(message.from_id, lang))
     except (InviteHashExpiredError, ValueError):
         await message.answer(channels["invalid_url"][lang])
     except UserAlreadyParticipantError:
@@ -41,7 +41,7 @@ async def remove_channel(message: types.Message, state: FSMContext):
         try:
             await leave_from_chat(channel)
             delete_channel(channel)
-            await message.answer(channels["removed"][lang], reply_markup = await main_menu(message, lang))
+            await message.answer(channels["removed"][lang], reply_markup = await main_menu(message.from_id, lang))
         except Exception as e:
             print(e)
         await state.finish()

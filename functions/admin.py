@@ -19,7 +19,7 @@ async def add_admin_handler(message: types.Message, state: FSMContext):
                 await message.answer(admin["already_exist"][lang])
             else:
                 add_admin(user_id)
-                await message.answer(admin["added"][lang], reply_markup = await main_menu(message, lang))
+                await message.answer(admin["added"][lang], reply_markup = await main_menu(message.from_id, lang))
                 await state.finish()
         else:
             await message.answer(admin["username_not_found"][lang])
@@ -38,7 +38,7 @@ async def remove_admin_handler(message: types.Message, state: FSMContext):
                 await message.answer(admin["not_exist"][lang])
             else:
                 delete_admin(user_id)
-                await message.answer(admin["removed"][lang], reply_markup = await main_menu(message, lang))
+                await message.answer(admin["removed"][lang], reply_markup = await main_menu(message.from_id, lang))
                 await state.finish()
         else:
             await message.answer(admin["username_not_found"][lang])

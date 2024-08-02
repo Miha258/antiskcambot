@@ -471,6 +471,10 @@ months_buttons = {
     "next": {
         "EN": "Next month",
         "RU": "Следующий месяц"
+    },
+    "back": {
+        "EN": "Back to menu",
+        "RU": "Назад в меню"
     }
 }
 

@@ -52,12 +52,12 @@ async def verify_user(message: types.Message, state: FSMContext):
                 usarname = target.get("username")
                 added_in = target.get("added_in")
                 link = target.get("link")
-                return await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in, link), parse_mode = "html", reply_markup = await main_menu(message, lang))
+                return await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in, link), parse_mode = "html", reply_markup = await main_menu(message.from_id, lang))
             else:
-                return await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
+                return await message.answer(user["not_found"][lang], reply_markup = await main_menu(message.from_id, lang))
         else:
             if isinstance(user_id, list):
-                await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
+                await message.answer(user["not_found"][lang], reply_markup = await main_menu(message.from_id, lang))
             elif isinstance(user_id, str):
                 target = await Blacklist.get_by_id(target)
                 if target:
@@ -65,11 +65,11 @@ async def verify_user(message: types.Message, state: FSMContext):
                     usarname = target.get("username")
                     added_in = target.get("added_in")
                     link = target.get("link")
-                    return await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in, link), parse_mode = "html", reply_markup = await main_menu(message, lang))
+                    return await message.answer(blacklist[lang](usarname if usarname else message.from_user.full_name, id, added_in, link), parse_mode = "html", reply_markup = await main_menu(message.from_id, lang))
                 else:
-                    return await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
+                    return await message.answer(user["not_found"][lang], reply_markup = await main_menu(message.from_id, lang))
             else:
-                await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
+                await message.answer(user["not_found"][lang], reply_markup = await main_menu(message.from_id, lang))
 
 
 async def add_to_database(message: types.Message, state: FSMContext):
@@ -92,10 +92,10 @@ async def add_to_database(message: types.Message, state: FSMContext):
         target_id = user_id
         target = await Blacklist.get_by_id(user_id)
     if target:
-        await message.answer(user["already_exsists"][lang], reply_markup = await main_menu(message, lang))
+        await message.answer(user["already_exsists"][lang], reply_markup = await main_menu(message.from_id, lang))
     else:
         await Blacklist.add(target_id, username, link)
-        await message.answer(user["added"][lang], reply_markup = await main_menu(message, lang))
+        await message.answer(user["added"][lang], reply_markup = await main_menu(message.from_id, lang))
     await state.finish()
 
 
@@ -115,9 +115,9 @@ async def delete_from_database(message: types.Message, state: FSMContext):
         
     if target:
         await Blacklist.remove(target_id)
-        await message.answer(user["deleted"][lang], reply_markup = await main_menu(message, lang))
+        await message.answer(user["deleted"][lang], reply_markup = await main_menu(message.from_id, lang))
     else:
-        await message.answer(user["not_found"][lang], reply_markup = await main_menu(message, lang))
+        await message.answer(user["not_found"][lang], reply_markup = await main_menu(message.from_id, lang))
     
     await state.finish()
   

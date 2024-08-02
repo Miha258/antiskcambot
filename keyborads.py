@@ -3,11 +3,13 @@ from aiogram import types
 from utils import get_admins, get_su_admins
 
 
-async def main_menu(message: types.Message, lang: str):
+async def main_menu(user_id: str | int, lang: str):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
-    is_admin = str(message.from_id) in get_admins()
+    
+    user_id = str(user_id) if isinstance(user_id, int) else user_id
+    is_admin = user_id in get_admins()
     menu_buttons = menu[lang] + admin_menu[lang] if is_admin else menu[lang]
-    is_su_admin = str(message.from_id) in get_su_admins()
+    is_su_admin = user_id in get_su_admins()
     if is_su_admin:
         menu_buttons = su_admin_menu[lang] + admin_menu[lang] + menu[lang]
     

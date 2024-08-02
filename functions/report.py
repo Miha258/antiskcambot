@@ -30,7 +30,7 @@ async def ask_report_url(message: types.Message, state: FSMContext):
             target_id = user_id
             target = await Blacklist.get_by_id(user_id)
         if target:
-            await message.answer(user["already_exsists"][lang], reply_markup = await main_menu(message, lang))
+            await message.answer(user["already_exsists"][lang], reply_markup = await main_menu(message.from_id, lang))
         else:
             await state.update_data({"username": username, "user_id": target_id})
             await message.answer(reports["report_url"][lang])
@@ -95,7 +95,7 @@ async def send_report(message: types.Message, state: FSMContext):
                 reports_list[target_id] = report_msg
         
         lang = get_language(message.from_id)
-        await message.answer(reports["report_sended"][lang], reply_markup = await main_menu(message, lang))
+        await message.answer(reports["report_sended"][lang], reply_markup = await main_menu(message.from_id, lang))
     await state.finish()
 
 

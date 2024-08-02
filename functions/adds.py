@@ -4,7 +4,7 @@ from aiogram.dispatcher import FSMContext
 from laguages import *
 from db.adds import Adds
 from db.users import Users
-from keyborads import back_to_menu
+from keyborads import back_to_menu, main_menu
 from datetime import datetime
 import re
 import asyncio
@@ -44,6 +44,9 @@ def get_calendar(lang: str, month: int = 0):
         types.InlineKeyboardButton(months_buttons["previous"][lang], callback_data = "prev_month"),
         types.InlineKeyboardButton(months[lang][date.month + month - 1], callback_data = "current_month"),
         types.InlineKeyboardButton(months_buttons["next"][lang], callback_data = "next_month"),
+    )
+    inline_markup.row( 
+        types.InlineKeyboardButton(months_buttons["back"][lang], callback_data = "back_to_menu"),
     )
     return inline_markup
 
@@ -130,11 +133,18 @@ async def send_message_with_delay(message: types.Message, state: FSMContext):
         await message.answer(adds["created"][lang](time), parse_mode = "html")
         await state.finish()
 
+
+async def back_from_calendar_to_menu(callback_query: types.CallbackQuery, state: FSMContext):
+    lang = get_language(callback_query.from_user.id)
+    await callback_query.message.answer(choose_option[lang], reply_markup = await main_menu(callback_query.from_user.id, lang))
+    await state.finish()
+    
+
 def register_adds(dp: Dispatcher):
     dp.register_callback_query_handler(choose_date, lambda cb: "calendar_day" in cb.data, state = SendInfo.SET_TIME)
     dp.register_callback_query_handler(set_calendar_month, lambda cb: cb.data in ["prev_month", "next_month"], state = SendInfo.SET_TIME)
     dp.register_message_handler(ask_for_count, state = SendInfo.SET_TIME)
-    
+    dp.register_callback_query_handler(back_from_calendar_to_menu, state = SendInfo.SET_TIME)
     dp.register_message_handler(send_adds_to_users, state = SendInfo.SET_FORWARD_MESSAGE)
     dp.register_message_handler(skip_media, lambda m: m.text in skip.values(), state = SendInfo.SET_MEDIA)
     dp.register_message_handler(ask_for_text, state = SendInfo.SET_MEDIA, content_types = types.ContentTypes.PHOTO | types.ContentTypes.VIDEO)
