@@ -26,7 +26,8 @@ async def premium_features_order(message: types.Message, state: FSMContext):
     await message.answer(choose_option[lang], reply_markup = kb)
     await state.set_state(BotStates.SELECT_OPTION)
 
-    
+
+SUPPORTED_METHODS = ('BITCOIN', 'BITCOINCASH', 'LITECOIN', 'ETHEREUM', 'DASH', "TEST")
 async def premium_select_option(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     await state.set_data({"option": message.text}) 
@@ -38,10 +39,11 @@ async def premium_select_option(message: types.Message, state: FSMContext):
             "auth_secret": os.environ.get('AUTH_SECRET'),
         }
         async with session.post(f'https://api.crystalpay.io/v2/method/list/', json = body) as response:
+            
             tickets = await response.json()
-            print(tickets)
-            for ticket in tickets["methods"].values():
-                kb.add(types.InlineKeyboardButton(ticket["name"], callback_data = f"set_currency_{ticket['currency']}"))
+            for method, ticket in list(zip(tickets["methods"].keys(), tickets["methods"].values())):
+                if method in SUPPORTED_METHODS:
+                    kb.add(types.InlineKeyboardButton(ticket["name"], callback_data = f"set_currency_{method}"))
 
             await message.answer(premium_options["choose_currency"][lang], reply_markup = kb, parse_mode = "html")
             await state.set_state(BotStates.SELECT_CURRENCY)
@@ -57,11 +59,12 @@ async def premium_select_currency(callback_data: types.CallbackQuery, state: FSM
 
 async def make_invoice(message: types.Message, state: FSMContext, price: int, currency: str, lang: str):
     async with aiohttp.ClientSession() as session:
+        print(currency)
         body = {
             "auth_login": os.environ.get('AUTH_LOGIN'),
             "auth_secret": os.environ.get('AUTH_SECRET'),
             "amount": price,
-            "amount_currency": currency,
+            "amount_currency": "USD",
             "required_method": currency,
             "type": "purchase",
             "description": f"Покупка #{message.from_user.mention}",
@@ -112,7 +115,6 @@ async def check_invoice(callback_query: types.CallbackQuery, state: FSMContext):
             "auth_secret": os.environ.get('AUTH_SECRET'),
             "id": check_id
         }
-        print(body)
         async with session.post(f'https://api.crystalpay.io/v2/invoice/info/', json = body) as response:
             data = await state.get_data()
             option = data.get("option")
