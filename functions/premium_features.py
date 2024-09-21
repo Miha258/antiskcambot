@@ -59,7 +59,6 @@ async def premium_select_currency(callback_data: types.CallbackQuery, state: FSM
 
 async def make_invoice(message: types.Message, state: FSMContext, price: int, currency: str, lang: str):
     async with aiohttp.ClientSession() as session:
-        print(currency)
         body = {
             "auth_login": os.environ.get('AUTH_LOGIN'),
             "auth_secret": os.environ.get('AUTH_SECRET'),
@@ -122,9 +121,10 @@ async def check_invoice(callback_query: types.CallbackQuery, state: FSMContext):
             channel_id = data.get("id")
             chat = await bot.get_chat(channel_id)
             paynament = await response.json()
-            if paynament['state'] != 'paid':
+            if paynament['state'] == 'payed':
                 if option in premium_options["auto_delete"].values():
                     await callback_query.message.answer(premium_options["auto_delete_paynamnet"][lang](chat.title, option), parse_mode = "html")
+                    await bot.send_message(channel_id, premium_options["auto_delete_paynamnet_bot"][lang], parse_mode = "html")
                     if not await Channels.get_by_id(channel_id):
                         await Channels.add(channel_id, callback_query.message.from_id, datetime.now() + timedelta(days = 31))
                     else:
@@ -146,14 +146,17 @@ async def check_invoice(callback_query: types.CallbackQuery, state: FSMContext):
                                 counter += 1
                         except Exception as e:
                             print(e)
-                    await callback_query.message.answer(premium_options["total_removed"][lang](counter), parse_mode = "html")
-                    await bot.send_message(channel_id, premium_options["total_removed"][lang](counter), parse_mode = "html")
-            elif paynament['state'] == 'processing':
-                await callback_query.message.answer(premium_options["processing_paynament"][lang])
-            elif paynament['state'] == 'failed':
-                await callback_query.message.answer(premium_options["failde_paynament"][lang])
-
-            await callback_query.message.delete()
+                    if counter != 0:
+                        await callback_query.message.answer(premium_options["total_removed"][lang](counter), parse_mode = "html")
+                        await bot.send_message(channel_id, premium_options["total_removed"][lang](counter), parse_mode = "html")
+                    else:
+                        await callback_query.message.answer(premium_options["not_found"][lang], parse_mode = "html")
+                        await bot.send_message(channel_id, premium_options["not_found"][lang], parse_mode = "html")
+                    await callback_query.message.delete()
+            elif paynament['state'] == 'notpayed':
+                await callback_query.message.answer(premium_options["processing_paynament"][lang], parse_mode = "html")
+            elif paynament['state'] == 'payed':
+                await callback_query.message.answer(premium_options["failde_paynament"][lang], parse_mode = "html")
 
 async def on_member_chat_join(message: types.Message):
     channel = await Channels.get_by_id(message.chat.id)

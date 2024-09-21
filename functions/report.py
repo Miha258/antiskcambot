@@ -70,7 +70,6 @@ async def send_report(message: types.Message, state: FSMContext):
         ])
         for admin in get_admins():
             lang = get_language(admin)
-            print(target_id, target_username, message.from_id)
             report = reports["report_form"][lang](target_id, target_username, message.from_id, message.from_user.mention, url, datetime.today().strftime("%d.%m.%Y %H:%M"))
             if media:
                 if len(media) == 1:

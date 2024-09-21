@@ -303,6 +303,10 @@ for "autodeletion of scammers".
         "EN": lambda count: f"Total removed: <b>{count} scammers</b>",
         "RU": lambda count: f"Всеого удалено: <b>{count} скамеров</b>"
     },
+    "not_found": {
+        "EN": "Has not found any scammers in your chat!",
+        "RU": "В вашем канале не найдено скамеров!"
+    },
     "auto_delete_paynamnet": {
         "EN": lambda channel, option: f"You <b>succesfully</b> bought \"{option}\" in group: <b>{channel}</b>",
         "RU": lambda channel, option: f"Вы <b>успешно</b> купили \"{option}\" в группе: <b>{channel}</b>"
@@ -310,6 +314,10 @@ for "autodeletion of scammers".
     "scammer_cleaning_paynamnet": {
         "EN": lambda channel: f"You <b>succesfully</b> bought \"scammer cleaning\" in group: <b>{channel}</b>",
         "RU": lambda channel: f"Вы <b>успешно</b> купили \"чистку от скамеров\" в группе:  <b>{channel}</b>"
+    },
+    "auto_delete_paynamnet_bot": {
+        "EN": "I'm standing guard here now 🛡",
+        "RU": "Тепер я стою здесь на защите 🛡"
     },
     "scammer_cleaning_processing": {
         "EN": "<b>Checking database for scammers in your group...</b>",
@@ -324,8 +332,8 @@ for "autodeletion of scammers".
         "RU": "<b>Ваша премиальная подписка на автоматическое удаление завершена</b>"
     },
     "failde_paynament": {
-        "EN": "<b>Произошла проблема, у вас не прошел платеж!</b>",
-        "RU": "<b>There was a problem, your payment failed!</b>",
+        "EN": "<b>There was a problem, your payment failed!</b>",
+        "RU": "<b>Произошла проблема, у вас не прошел платеж!</b>",
     },
     "processing_paynament": {
         "EN": "Your payment is being processed, please try to check it later",

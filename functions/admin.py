@@ -30,7 +30,6 @@ async def add_admin_handler(message: types.Message, state: FSMContext):
 async def remove_admin_handler(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     username = await get_username(message)
-    print(username)
     if username:
         user_id = await search_user(username)
         if user_id:
