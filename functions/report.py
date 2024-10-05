@@ -45,6 +45,7 @@ async def ask_report_media(message: types.Message, state: FSMContext):
 
 media = []
 async def handle_media(message: types.Message):
+    print(message)
     global media
     if media:
         media.append(message.photo[0] if message.photo else None or message.video)
@@ -71,27 +72,30 @@ async def send_report(message: types.Message, state: FSMContext):
         for admin in get_admins():
             lang = get_language(admin)
             report = reports["report_form"][lang](target_id, target_username, message.from_id, message.from_user.mention, url, datetime.today().strftime("%d.%m.%Y %H:%M"))
-            if media:
-                if len(media) == 1:
-                    media_data = media[0]
-                    if isinstance(media_data, types.PhotoSize):
-                        report_msg = await bot.send_photo(admin, media_data.file_id, caption = report, parse_mode = "html", reply_markup = report_kb)
-                    elif isinstance(media_data, types.Video):
-                        report_msg = await bot.send_video(admin, media_data.file_id, caption = report, parse_mode = "html", reply_markup = report_kb)
+            try:
+                if media:
+                    if len(media) == 1:
+                        media_data = media[0]
+                        if isinstance(media_data, types.PhotoSize):
+                            report_msg = await bot.send_photo(admin, media_data.file_id, caption = report, parse_mode = "html", reply_markup = report_kb)
+                        elif isinstance(media_data, types.Video):
+                            report_msg = await bot.send_video(admin, media_data.file_id, caption = report, parse_mode = "html", reply_markup = report_kb)
+                        reports_list[target_id] = report_msg
+                    if len(media) > 1:
+                        media_group = types.MediaGroup()
+                        for content in media:
+                            if isinstance(content, types.PhotoSize):
+                                media_group.attach_photo(content.file_id)
+                            elif isinstance(content, types.Video):
+                                media_group.attach_video(content.file_id)
+                        await bot.send_media_group(admin, media_group)
+                        await bot.send_message(admin, report, reply_markup = report_kb, parse_mode = "html")
+                        reports_list[target_id] = [report, media_group]
+                else:
+                    report_msg = await bot.send_message(admin, report, parse_mode = "html", reply_markup = report_kb)
                     reports_list[target_id] = report_msg
-                if len(media) > 1:
-                    media_group = types.MediaGroup()
-                    for content in media:
-                        if isinstance(content, types.PhotoSize):
-                            media_group.attach_photo(content.file_id)
-                        elif isinstance(content, types.Video):
-                            media_group.attach_video(content.file_id)
-                    await bot.send_media_group(admin, media_group)
-                    await bot.send_message(admin, report, reply_markup = report_kb, parse_mode = "html")
-                    reports_list[target_id] = [report, media_group]
-            else:
-                report_msg = await bot.send_message(admin, report, parse_mode = "html", reply_markup = report_kb)
-                reports_list[target_id] = report_msg
+            except Exception as e:
+                print(e)
         
         lang = get_language(message.from_id)
         await message.answer(reports["report_sended"][lang], reply_markup = await main_menu(message.from_id, lang))
@@ -101,9 +105,10 @@ async def send_report(message: types.Message, state: FSMContext):
 async def approve_report(callback_data: types.CallbackQuery):
     lang = get_language(callback_data.from_user.id)
     report_id = int(callback_data.data.split('_')[-1])
-    
-
-    if report_id in reports_list.keys():
+    message = callback_data.message
+    print(type(report_id), reports_list)
+    print(reports_list.get(int(report_id)), reports_list.get(report_id))
+    if reports_list.get(int(report_id)):
         message: types.Message | list[types.Message] = reports_list[report_id]
         if isinstance(message, types.Message):
             report_link = await message.forward(main_chat)
@@ -138,6 +143,6 @@ def register_report(dp: Dispatcher):
     dp.register_message_handler(ask_report_media, state = BotStates.REPORT_TEXT)
     dp.register_message_handler(send_report, lambda m: m.text in send.values(), state = BotStates.REPORT_MEDIA)
     dp.register_message_handler(skip_media, lambda m: m.text in skip.values(), state = BotStates.REPORT_MEDIA)
-    dp.register_message_handler(handle_media, state = BotStates.REPORT_MEDIA, content_types = types.ContentTypes.PHOTO | types.ContentTypes.VIDEO) 
+    dp.register_message_handler(handle_media, state = BotStates.REPORT_MEDIA, content_types = types.ContentTypes.PHOTO | types.ContentTypes.VIDEO | types.ContentTypes.TEXT) 
     dp.register_callback_query_handler(approve_report, lambda cb: "approve_report" in cb.data)
     dp.register_callback_query_handler(disapprove_report, lambda cb: "disapprove_report" in cb.data)

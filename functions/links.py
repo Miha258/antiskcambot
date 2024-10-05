@@ -10,9 +10,10 @@ async def support(message: types.Message, state: FSMContext):
     await message.answer(about_urls["support"][lang])
     await state.set_state(BotStates.SEND_REPORT)
 
-async def send_support(message: types.Message):
+async def send_support(message: types.Message, state: FSMContext):
     lang = get_language(message.from_id)
     await message.answer(about_urls["support_accepted"][lang])
+    await state.finish()
     for admin in get_su_admins():
         await bot.send_message(admin, about_urls["notify_support"][lang](message.from_user.mention, message.text))
 
