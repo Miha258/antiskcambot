@@ -296,7 +296,7 @@ for "autodeletion of scammers".
         "RU": lambda url: f'Перейдите по <a href="{url}">ссылке</a> для оплаты'
     },
     "scammer_removed": {
-        "EN": lambda mention: f"<b>Scammer {mention} was removed from your chat!</b>",
+        "EN": lambda mention: f"<b>Scammer {mention} was removed from your group!</b>",
         "RU": lambda mention: f"<b>Скамер {mention} был удален с вашей группы!</b>"
     },
     "total_removed": {
@@ -304,8 +304,8 @@ for "autodeletion of scammers".
         "RU": lambda count: f"Всеого удалено: <b>{count} скамеров</b>"
     },
     "not_found": {
-        "EN": "Has not found any scammers in your chat!",
-        "RU": "В вашем канале не найдено скамеров!"
+        "EN": "Has not found any scammers in your group!",
+        "RU": "В вашей группе не найдено скамеров!"
     },
     "auto_delete_paynamnet": {
         "EN": lambda channel, option: f"You <b>succesfully</b> bought \"{option}\" in group: <b>{channel}</b>",
@@ -321,7 +321,7 @@ for "autodeletion of scammers".
     },
     "scammer_cleaning_processing": {
         "EN": "<b>Checking database for scammers in your group...</b>",
-        "RU": "<b>Проверка базы данных на скамеров в вашем группе...</b>"
+        "RU": "<b>Проверка базы данных на скамеров в вашей группе...</b>"
     },
     "subscription_exist": {
         "EN": lambda to: f"You already have auto deleting subscription to: <b>{to}</b>",
